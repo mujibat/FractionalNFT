@@ -4,7 +4,7 @@
 //  import { ERC721NFT } from "./NFT.sol";
 
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+// import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 
@@ -23,9 +23,12 @@ contract NFTMarketplace {
         bool active;
         uint balance;
     }
+    constructor(address _token) {
+        erctoken = ERC20Token(_token); 
+    }
 
     uint fractionPrice = 0.01 ether;
-    uint fractionsToWhole = 55;
+    uint fractionsToWhole = 100;
     uint wholeNFT = 1 ether;
     mapping(uint256 => Listing) public listings;
 
@@ -57,10 +60,10 @@ contract NFTMarketplace {
 
         address seller = listing.seller;
         listing.balance += msg.value;
-        uint charges = 1 / 10 * listing.balance;
+        uint charges = 1 * listing.balance / 10;
         uint listingFee = charges;
         uint sellermoney = listing.balance - charges;
-        ERC20(seller).mint(msg.sender, 1e18);
+        ERC20(seller).mint(msg.sender, 100 wei);
         payable(seller).transfer(sellermoney);
         payable(vaultPlatform).transfer(listingFee);
 
@@ -76,7 +79,7 @@ contract NFTMarketplace {
 
         nftContract.safeTransferFrom(seller, msg.sender, _tokenId);
         ERC20(seller).mint(msg.sender, 1e18);
-        uint charges = 1 / 10 * listing.balance;
+        uint charges = 1 * listing.balance / 10;
         uint listingFee = charges;
         uint sellermoney = listing.balance - charges;
         payable(seller).transfer(sellermoney);
